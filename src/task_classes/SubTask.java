@@ -1,3 +1,7 @@
+package task_classes;
+
+import task_dispatchers.State;
+
 public class SubTask extends Task {
     private int epicID;
 
@@ -22,7 +26,7 @@ public class SubTask extends Task {
     @Override
     public String toString() {
 
-        return super.toString() + " SubTask{" +
+        return super.toString() + " tasks.SubTask{" +
                 "epicID=" + epicID +
                 '}';
     }

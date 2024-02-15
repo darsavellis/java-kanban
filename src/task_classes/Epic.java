@@ -1,3 +1,7 @@
+package task_classes;
+
+import task_dispatchers.State;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -52,7 +56,7 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        return super.toString() + " Epic{" +
+        return super.toString() + " tasks.Epic{" +
                 "subTasksArrayList=" + subTaskArrayList +
                 ", stateStatistics=" + stateStatistics +
                 '}';
