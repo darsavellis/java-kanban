@@ -1,4 +1,4 @@
-package implementations.task_classes;
+package implementations.tasks;
 
 import org.junit.jupiter.api.Test;
 

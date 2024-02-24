@@ -1,6 +1,6 @@
 package implementations.dispatchers;
 
-import implementations.task_classes.Task;
+import implementations.tasks.Task;
 import interfaces.HistoryManager;
 
 import java.util.LinkedList;

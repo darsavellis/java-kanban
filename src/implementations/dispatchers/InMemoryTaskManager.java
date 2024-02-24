@@ -1,8 +1,8 @@
 package implementations.dispatchers;
 
-import implementations.task_classes.Epic;
-import implementations.task_classes.SubTask;
-import implementations.task_classes.Task;
+import implementations.tasks.Epic;
+import implementations.tasks.SubTask;
+import implementations.tasks.Task;
 import implementations.utility.Managers;
 import interfaces.HistoryManager;
 import interfaces.TaskManager;
