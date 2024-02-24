@@ -1,6 +1,6 @@
-package task_classes;
+package implementations.task_classes;
 
-import task_dispatchers.State;
+import implementations.utility.State;
 
 import java.util.Objects;
 
