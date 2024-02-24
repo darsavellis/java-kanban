@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public interface TaskManager {
-    void createTask(Task task);
+    Integer createTask(Task task);
 
     boolean updateTask(Task task);
 
@@ -18,31 +18,31 @@ public interface TaskManager {
 
     void removeAllTasks();
 
-    Task removeTaskById(int id);
+    Task removeTaskById(Integer id);
 
-    void createEpic(Epic epic);
+    Integer createEpic(Epic epic);
 
     boolean updateEpic(Epic epic);
 
-    Epic getEpicById(int id);
+    Epic getEpicById(Integer id);
 
-    ArrayList<Epic> getAllEpics();
+    List<Epic> getAllEpics();
 
     void removeAllEpics();
 
-    Epic removeEpicById(int id);
+    Epic removeEpicById(Integer id);
 
-    ArrayList<SubTask> getAllSubTasksFromEpic(Epic epic);
+    List<SubTask> getAllSubTasksFromEpic(Epic epic);
 
-    void createSubTask(SubTask subTask);
+    Integer createSubTask(SubTask subTask);
 
     boolean updateSubTask(SubTask subTask);
 
-    SubTask getSubTaskById(int id);
+    SubTask getSubTaskById(Integer id);
 
-    ArrayList<SubTask> getAllSubTasks();
+    List<SubTask> getAllSubTasks();
 
-    SubTask removeSubTaskById(int id);
+    SubTask removeSubTaskById(Integer id);
 
     void removeAllSubTasks();
 

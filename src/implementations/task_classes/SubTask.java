@@ -5,12 +5,12 @@ import implementations.utility.State;
 public class SubTask extends Task {
     private int epicID;
 
-    public SubTask(int epicId, String name, String description, State state) {
+    public SubTask(Integer epicId, String name, String description, State state) {
         super(name, description, state);
         setEpicID(epicId);
     }
 
-    public SubTask(int id, int epicId, String name, String description, State state) {
+    public SubTask(Integer id, Integer epicId, String name, String description, State state) {
         super(id, name, description, state);
         setEpicID(epicId);
     }
@@ -19,8 +19,10 @@ public class SubTask extends Task {
         return epicID;
     }
 
-    public void setEpicID(int epicID) {
-        this.epicID = epicID;
+    public void setEpicID(Integer epicID) {
+        if (epicID != null) {
+            this.epicID = epicID;
+        }
     }
 
     @Override
