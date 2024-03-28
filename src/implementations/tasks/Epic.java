@@ -29,7 +29,7 @@ public class Epic extends Task {
     }
 
     public void removeSubTaskId(SubTask subTask) {
-        subTaskArrayList.remove(Integer.valueOf(subTask.getId()));
+        subTaskArrayList.remove(subTask.getId());
         updateStatistics(subTask, "sub");
     }
 
@@ -51,7 +51,7 @@ public class Epic extends Task {
     }
 
     public ArrayList<Integer> getSubTaskArrayList() {
-        return subTaskArrayList;
+        return new ArrayList<>(subTaskArrayList);
     }
 
     @Override
