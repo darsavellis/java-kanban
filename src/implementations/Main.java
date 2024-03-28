@@ -61,25 +61,29 @@ public class Main {
         Integer secondSubTaskId = taskManager.createSubTask(secondSubTask);
         Integer thirdSubTaskId = taskManager.createSubTask(thirdSubTask);
 
-        printHistory(taskManager);
-
-        System.out.println("Делаем запрос к задаче: \n" + taskManager.getTaskById(firstTaskId));
-        System.out.println("Делаем запрос к задаче: \n" + taskManager.getTaskById(secondTaskId));
-        System.out.println("Делаем запрос к подзадаче: \n" + taskManager.getSubTaskById(firstSubTaskId));
-        System.out.println("Делаем запрос к подзадаче: \n" + taskManager.getSubTaskById(secondSubTaskId));
-        System.out.println("Делаем запрос к подзадаче: \n" + taskManager.getSubTaskById(thirdSubTaskId));
-        System.out.println("Делаем запрос к эпику: \n" + taskManager.getEpicById(epicId));
-        System.out.println("Делаем запрос к эпику: \n" + taskManager.getEpicById(emptyEpicId));
+        String textForTaskQuery = "Делаем запрос к задаче: \n";
+        String textForSubTaskQuery = "Делаем запрос к подзадаче: \n";
+        String textForEpicQuery = "Делаем запрос к эпику: \n";
 
         printHistory(taskManager);
 
-        System.out.println("Делаем запрос к задаче: \n" + taskManager.getTaskById(firstTaskId));
-        System.out.println("Делаем запрос к задаче: \n" + taskManager.getTaskById(secondTaskId));
+        System.out.println(textForTaskQuery + taskManager.getTaskById(firstTaskId));
+        System.out.println(textForTaskQuery + taskManager.getTaskById(secondTaskId));
+        System.out.println(textForSubTaskQuery + taskManager.getSubTaskById(firstSubTaskId));
+        System.out.println(textForSubTaskQuery + taskManager.getSubTaskById(secondSubTaskId));
+        System.out.println(textForSubTaskQuery + taskManager.getSubTaskById(thirdSubTaskId));
+        System.out.println(textForEpicQuery + taskManager.getEpicById(epicId));
+        System.out.println(textForEpicQuery + taskManager.getEpicById(emptyEpicId));
+
+        printHistory(taskManager);
+
+        System.out.println(textForTaskQuery + taskManager.getTaskById(firstTaskId));
+        System.out.println(textForTaskQuery + taskManager.getTaskById(secondTaskId));
 
         printHistory(taskManager);
 
         for (int i = 0; i < 5; i++) {
-            System.out.println("Делаем запрос к задаче: \n" + taskManager.getTaskById(firstTaskId));
+            System.out.println(textForTaskQuery + taskManager.getTaskById(firstTaskId));
         }
 
         printHistory(taskManager);
