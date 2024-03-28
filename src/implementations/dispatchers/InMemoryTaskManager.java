@@ -68,12 +68,16 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void removeAllTasks() {
+        for (Integer id : taskHashMap.keySet()) {
+            removeTaskById(id);
+        }
         taskHashMap.clear();
     }
 
     @Override
     public Task removeTaskById(Integer id) {
         if (taskHashMap.containsKey(id)) {
+            historyManager.remove(id);
             return taskHashMap.remove(id);
         } else {
             return null;
@@ -120,12 +124,19 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void removeAllEpics() {
         removeAllSubTasks();
+        for (Integer epicId : epicHashMap.keySet()) {
+            removeEpicById(epicId);
+        }
         epicHashMap.clear();
     }
 
     @Override
     public Epic removeEpicById(Integer id) {
         if (epicHashMap.containsKey(id)) {
+            historyManager.remove(id);
+            for (Integer subTaskId : epicHashMap.get(id).getSubTaskArrayList()) {
+                removeSubTaskById(subTaskId);
+            }
             return epicHashMap.remove(id);
         } else {
             return null;
@@ -189,6 +200,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (subTaskHashMap.containsKey(id)) {
             SubTask subTask = subTaskHashMap.remove(id);
             epicHashMap.get(subTask.getEpicID()).removeSubTaskId(subTask);
+            historyManager.remove(id);
             return subTask;
         } else {
             return null;
@@ -197,6 +209,9 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void removeAllSubTasks() {
+        for (Integer id : subTaskHashMap.keySet()) {
+            removeSubTaskById(id);
+        }
         subTaskHashMap.clear();
     }
 
