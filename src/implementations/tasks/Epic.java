@@ -9,7 +9,7 @@ public class Epic extends Task {
     private final ArrayList<Integer> subTaskArrayList = new ArrayList<>();
     private final HashMap<State, Integer> stateStatistics = new HashMap<>();
 
-    {
+    private void initialBlockForCheckStylePassing() {
         stateStatistics.put(State.NEW, 0);
         stateStatistics.put(State.IN_PROGRESS, 0);
         stateStatistics.put(State.DONE, 0);
@@ -17,10 +17,12 @@ public class Epic extends Task {
 
     public Epic(int id, String name, String description) {
         super(id, name, description, State.NEW);
+        initialBlockForCheckStylePassing();
     }
 
     public Epic(String name, String description) {
         super(name, description, State.NEW);
+        initialBlockForCheckStylePassing();
     }
 
     public void addSubTaskId(SubTask subTask) {
@@ -29,7 +31,7 @@ public class Epic extends Task {
     }
 
     public void removeSubTaskId(SubTask subTask) {
-        subTaskArrayList.remove(Integer.valueOf(subTask.getId()));
+        subTaskArrayList.remove(subTask.getId());
         updateStatistics(subTask, "sub");
     }
 
@@ -51,7 +53,7 @@ public class Epic extends Task {
     }
 
     public ArrayList<Integer> getSubTaskArrayList() {
-        return subTaskArrayList;
+        return new ArrayList<>(subTaskArrayList);
     }
 
     @Override

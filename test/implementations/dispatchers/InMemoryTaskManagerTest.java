@@ -93,8 +93,8 @@ class InMemoryTaskManagerTest {
 
     @Test
     public void createEpicsWithIllegalArguments() {
-        Epic epic = new Epic("Test createEpic", "Test createEpic description");
-        final Integer epicId = taskManager.createEpic(epic);
+//        Epic epic = new Epic("Test createEpic", "Test createEpic description");
+//        final Integer epicId = taskManager.createEpic(epic);
 //        We can pass to addSubTaskId only subTask object
 //        epic.addSubTaskId(epicId);
     }
@@ -129,6 +129,10 @@ class InMemoryTaskManagerTest {
         taskManager.updateEpic(updatedEpic);
         taskManager.updateSubTask(updatedSubTask);
 
+        taskManager.getTaskById(taskId);
+        taskManager.getEpicById(epicId);
+        taskManager.getSubTaskById(subTaskId);
+
         assertEquals(3, history.size());
         assertEquals(task, history.get(0));
         assertEquals(epic, history.get(1));
@@ -136,5 +140,77 @@ class InMemoryTaskManagerTest {
         assertNotSame(task.getState(), updatedTask.getState());
         assertNotSame(epic.getState(), updatedEpic.getState());
         assertNotSame(subTask.getState(), updatedSubTask.getState());
+    }
+
+    @Test
+    public void removeTaskFromManagerAndFromHistory() {
+        assertEquals(task, taskManager.getTaskById(taskId));
+
+        List<Task> historyManager = taskManager.getHistoryManager();
+
+        assertArrayEquals(historyManager.toArray(), taskManager.getAllTasks().toArray());
+        assertEquals(taskManager.getAllTasks().size(), historyManager.size());
+
+        taskManager.removeAllTasks();
+        historyManager = taskManager.getHistoryManager();
+
+        assertEquals(taskManager.getAllTasks().size(), historyManager.size());
+    }
+
+    @Test
+    public void removeEpicFromManagerAndFromHistory() {
+        assertEquals(epic, taskManager.getEpicById(epicId));
+
+        List<Task> historyManager = taskManager.getHistoryManager();
+
+        assertArrayEquals(historyManager.toArray(), taskManager.getAllEpics().toArray());
+        assertEquals(taskManager.getAllEpics().size(), historyManager.size());
+
+        assertArrayEquals(taskManager.getAllSubTasksFromEpic(epic).toArray(), taskManager.getAllSubTasks().toArray());
+
+        taskManager.removeAllEpics();
+        historyManager = taskManager.getHistoryManager();
+
+        assertEquals(taskManager.getAllEpics().size(), historyManager.size());
+    }
+
+    @Test
+    public void removeSubTaskFromManagerAndFromHistory() {
+        assertEquals(subTask, taskManager.getSubTaskById(subTaskId));
+
+        List<Task> historyManager = taskManager.getHistoryManager();
+
+        assertArrayEquals(historyManager.toArray(), taskManager.getAllSubTasks().toArray());
+        assertEquals(taskManager.getAllSubTasks().size(), historyManager.size());
+
+        taskManager.removeAllSubTasks();
+        historyManager = taskManager.getHistoryManager();
+
+        assertEquals(taskManager.getAllSubTasks().size(), historyManager.size());
+    }
+
+    @Test
+    public void endlessHistoryManagerTest() {
+        taskManager.getTaskById(taskId);
+        taskManager.getEpicById(epicId);
+        taskManager.getSubTaskById(subTaskId);
+
+        List<Task> historyManager = taskManager.getHistoryManager();
+
+        assertEquals(3, historyManager.size());
+        assertEquals(historyManager.get(0), task);
+        assertEquals(historyManager.get(1), epic);
+        assertEquals(historyManager.get(2), subTask);
+
+        subTask = taskManager.getSubTaskById(subTaskId);
+        epic = taskManager.getEpicById(epicId);
+        task = taskManager.getTaskById(taskId);
+
+        historyManager = taskManager.getHistoryManager();
+
+        assertEquals(3, historyManager.size());
+        assertEquals(historyManager.get(0), subTask);
+        assertEquals(historyManager.get(1), epic);
+        assertEquals(historyManager.get(2), task);
     }
 }

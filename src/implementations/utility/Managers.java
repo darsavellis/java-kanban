@@ -1,6 +1,5 @@
 package implementations.utility;
 
-
 import implementations.dispatchers.InMemoryHistoryManager;
 import implementations.dispatchers.InMemoryTaskManager;
 import interfaces.HistoryManager;
