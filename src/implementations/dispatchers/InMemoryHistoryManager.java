@@ -15,7 +15,9 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void addTask(Task task) {
-        linkLast(task);
+        if (task != null) {
+            linkLast(task);
+        }
     }
 
     private void updateSize() {
@@ -47,7 +49,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         Node element = taskIndexes.get(id);
         if (size == 1) {
             first = last = null;
-        } else {
+        } else if (size > 1) {
             Node next = element.getNext();
             Node previous = element.getPrevious();
             removeCurrentFromNext(next, previous);
@@ -88,10 +90,10 @@ public class InMemoryHistoryManager implements HistoryManager {
     private ArrayList<Task> getTasks() {
         ArrayList<Task> taskArrayList = new ArrayList<>();
         if (size != 0) {
-            Node iter = first;
-            while (iter != null) {
-                taskArrayList.add(iter.getValue());
-                iter = iter.getNext();
+            Node iterator = first;
+            while (iterator != null) {
+                taskArrayList.add(iterator.getValue());
+                iterator = iterator.getNext();
             }
         }
         return taskArrayList;

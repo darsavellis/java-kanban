@@ -12,12 +12,12 @@ import java.util.HashMap;
 import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager {
-    static int TASK_COUNTER = 0;
+    protected static int TASK_COUNTER;
     private final HashMap<Integer, Task> taskHashMap;
     private final HashMap<Integer, SubTask> subTaskHashMap;
     private final HashMap<Integer, Epic> epicHashMap;
 
-    private final HistoryManager historyManager = Managers.getDefaultHistory();
+    protected final HistoryManager historyManager = Managers.getDefaultHistory();
 
     private static int generateId() {
         return TASK_COUNTER++;
@@ -29,15 +29,19 @@ public class InMemoryTaskManager implements TaskManager {
         epicHashMap = new HashMap<>();
     }
 
-    @Override
-    public Integer createTask(Task task) {
+    protected Integer putInTaskHashMap(Task task) {
         if (task != null) {
-            task.setId(generateId());
             taskHashMap.put(task.getId(), task);
             return task.getId();
         } else {
             return null;
         }
+    }
+
+    @Override
+    public Integer createTask(Task task) {
+        task.setId(generateId());
+        return putInTaskHashMap(task);
     }
 
     @Override
@@ -84,15 +88,19 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    @Override
-    public Integer createEpic(Epic epic) {
+    protected Integer putInEpicHashMap(Epic epic) {
         if (epic != null) {
-            epic.setId(generateId());
             epicHashMap.put(epic.getId(), epic);
             return epic.getId();
         } else {
             return null;
         }
+    }
+
+    @Override
+    public Integer createEpic(Epic epic) {
+        epic.setId(generateId());
+        return putInEpicHashMap(epic);
     }
 
     @Override
@@ -156,15 +164,19 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    @Override
-    public Integer createSubTask(SubTask subTask) {
-        subTask.setId(generateId());
+    protected Integer putInSubTaskHashMap(SubTask subTask) {
         if (linkSubTaskToEpic(subTask)) {
             subTaskHashMap.put(subTask.getId(), subTask);
             return subTask.getId();
         } else {
             return null;
         }
+    }
+
+    @Override
+    public Integer createSubTask(SubTask subTask) {
+        subTask.setId(generateId());
+        return putInSubTaskHashMap(subTask);
     }
 
     @Override
