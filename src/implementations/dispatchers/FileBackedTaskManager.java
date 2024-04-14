@@ -26,22 +26,22 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     public static FileBackedTaskManager loadFromFile(Path dataFile) {
         FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(dataFile);
-        LinkedList<String> lines = new LinkedList<>();
+        LinkedList<String> readLinesFromFile = new LinkedList<>();
         try (BufferedReader bufferedReader = new BufferedReader(
                 new FileReader(dataFile.toString(), StandardCharsets.UTF_8))) {
             if (bufferedReader.ready()) {
                 bufferedReader.readLine();
             }
             while (bufferedReader.ready()) {
-                lines.add(bufferedReader.readLine());
+                readLinesFromFile.add(bufferedReader.readLine());
             }
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
 
-        String historyLine = lines.pollLast();
+        String historyLine = readLinesFromFile.pollLast();
 
-        for (String line : lines) {
+        for (String line : readLinesFromFile) {
             if (!line.isEmpty()) {
                 fileBackedTaskManager.taskFromString(line);
             }
@@ -265,7 +265,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
         SubTask firstSubTask = new SubTask(
                 firstEpic.getId(),
-                "Поуда",
+                "Посуда",
                 "Помыть посуду на кухне",
                 State.NEW
         );
