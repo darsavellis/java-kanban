@@ -98,7 +98,7 @@ public class Main {
         printHistory(taskManager);
     }
 
-    private static void printHistory(TaskManager taskManager) {
+    public static void printHistory(TaskManager taskManager) {
         List<Task> historyManager = taskManager.getHistoryManager();
 
         System.out.println();
