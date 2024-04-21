@@ -44,25 +44,25 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         readLinesFromFile.stream().filter(x -> !x.isEmpty()).forEach(fileBackedTaskManager::taskFromString);
 
         if (Objects.nonNull(historyLine)) {
-            historyFromString(historyLine).stream().
-                    peek(fileBackedTaskManager::getTaskById).
-                    peek(fileBackedTaskManager::getEpicById).
-                    forEach(fileBackedTaskManager::getSubTaskById);
+            historyFromString(historyLine).stream()
+                    .peek(fileBackedTaskManager::getTaskById)
+                    .peek(fileBackedTaskManager::getEpicById)
+                    .forEach(fileBackedTaskManager::getSubTaskById);
         }
         return fileBackedTaskManager;
     }
 
     static String historyToString(HistoryManager historyManager) {
-        return historyManager.getHistory().stream().
-                map(Task::getId).
-                map(String::valueOf).
-                collect(Collectors.joining(DELIMITER_COMMA));
+        return historyManager.getHistory().stream()
+                .map(Task::getId)
+                .map(String::valueOf)
+                .collect(Collectors.joining(DELIMITER_COMMA));
     }
 
     static List<Integer> historyFromString(String value) {
-        return Arrays.stream(value.split(DELIMITER_COMMA)).
-                map(Integer::parseInt).
-                collect(Collectors.toList());
+        return Arrays.stream(value.split(DELIMITER_COMMA))
+                .map(Integer::parseInt)
+                .collect(Collectors.toList());
     }
 
     private FileBackedTaskManager(Path dataFile) {
@@ -94,7 +94,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             case SUBTASK:
                 putSubTaskInStorage(new SubTask(
                         Integer.valueOf(arguments[0]), Integer.valueOf(arguments[5]), arguments[2], arguments[4],
-                        State.valueOf(arguments[3]), parseStringToDate(arguments[6]),Long.parseLong(arguments[7])));
+                        State.valueOf(arguments[3]), parseStringToDate(arguments[6]), Long.parseLong(arguments[7])));
                 break;
         }
     }

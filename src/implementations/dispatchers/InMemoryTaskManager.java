@@ -27,13 +27,27 @@ public class InMemoryTaskManager implements TaskManager {
         taskHashMap = new HashMap<>();
         subTaskHashMap = new HashMap<>();
         epicHashMap = new HashMap<>();
-        prioritizedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime));
+        prioritizedTasks = new TreeSet<>((first, second) -> {
+            LocalDateTime firstStart = first.getStartTime();
+            LocalDateTime firstEnd = first.getEndTime();
+            LocalDateTime secondStart = second.getStartTime();
+            LocalDateTime secondEnd = second.getEndTime();
+
+            if ((firstStart.isAfter(secondEnd)) || firstStart.isEqual(secondEnd)
+                    && firstStart.isAfter(secondStart)) {
+                return 1;
+            } else if ((secondStart.isAfter(firstEnd)) || secondStart.isEqual(firstEnd)
+                    && secondStart.isEqual(firstEnd)) {
+                return -1;
+            } else {
+                return 0;
+            }
+        });
     }
 
     protected Integer putTaskInStorage(Task task) {
         if (task != null && validateTaskOnOverlapping(task)) {
             taskHashMap.put(task.getId(), task);
-            addTaskToPrioritizingSet(task);
             return task.getId();
         } else {
             return null;
@@ -153,7 +167,6 @@ public class InMemoryTaskManager implements TaskManager {
     protected Integer putSubTaskInStorage(SubTask subTask) {
         if (subTask != null && validateTaskOnOverlapping(subTask) && linkSubTaskToEpic(subTask)) {
             subTaskHashMap.put(subTask.getId(), subTask);
-            addTaskToPrioritizingSet(subTask);
             updateEpicTime(subTask);
             return subTask.getId();
         } else {
@@ -230,25 +243,14 @@ public class InMemoryTaskManager implements TaskManager {
         prioritizedTasks.remove(task);
     }
 
-    public void addTaskToPrioritizingSet(Task task) {
-        if (task.isReadyForPrioritizing()) {
-            prioritizedTasks.add(task);
-        }
-    }
-
     public boolean validateTaskOnOverlapping(Task task) {
         if (task.isReadyForPrioritizing()) {
-            return getPrioritizedTasks().stream().allMatch(element -> twoTaskDoesNotOverlap(element, task));
+            int sizeBefore = prioritizedTasks.size();
+            prioritizedTasks.add(task);
+            return prioritizedTasks.size() != sizeBefore;
         } else {
             return true;
         }
-    }
-
-    public boolean twoTaskDoesNotOverlap(Task firstTask, Task secondTask) {
-        return firstTask.getStartTime().isAfter(secondTask.getEndTime()) ||
-                secondTask.getStartTime().isAfter(firstTask.getEndTime()) ||
-                firstTask.getStartTime().isEqual(secondTask.getEndTime()) ||
-                secondTask.getStartTime().isEqual(firstTask.getEndTime());
     }
 
     private void updateEpicTime(SubTask subTask) {
@@ -260,20 +262,19 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     private void updateEpicStartTime(Epic epic) {
-        getAllSubTasksFromEpic(epic).stream().filter(Task::isReadyForPrioritizing).
-                map(Task::getStartTime).min(LocalDateTime::compareTo).ifPresent(epic::setStartTime);
+        getAllSubTasksFromEpic(epic).stream().filter(Task::isReadyForPrioritizing)
+                .map(Task::getStartTime).min(LocalDateTime::compareTo).ifPresent(epic::setStartTime);
     }
 
     private void updateEpicEndTime(Epic epic) {
-        getAllSubTasksFromEpic(epic).stream().filter(Task::isReadyForPrioritizing).
-                map(Task::getEndTime).max(LocalDateTime::compareTo).ifPresent(epic::setEndTime);
+        getAllSubTasksFromEpic(epic).stream().filter(Task::isReadyForPrioritizing)
+                .map(Task::getEndTime).max(LocalDateTime::compareTo).ifPresent(epic::setEndTime);
     }
 
     private void updateEpicDuration(Epic epic) {
-        Optional<Long> sumOfDuration = getAllSubTasksFromEpic(epic).stream().
-                filter(Task::isReadyForPrioritizing).
-                map(Task::getDuration).
-                reduce(Long::sum);
+        Optional<Long> sumOfDuration = getAllSubTasksFromEpic(epic).stream()
+                .filter(Task::isReadyForPrioritizing).map(Task::getDuration).reduce(Long::sum);
+
         sumOfDuration.ifPresent(epic::setDuration);
     }
 
