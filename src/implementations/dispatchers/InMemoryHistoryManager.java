@@ -6,6 +6,7 @@ import interfaces.HistoryManager;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class InMemoryHistoryManager implements HistoryManager {
     private final HashMap<Integer, Node> taskIndexes = new HashMap<>();
@@ -47,16 +48,18 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     private void removeNode(Integer id) {
         Node element = taskIndexes.get(id);
-        if (size == 1) {
-            first = last = null;
-        } else if (size > 1) {
-            Node next = element.getNext();
-            Node previous = element.getPrevious();
-            removeCurrentFromNext(next, previous);
-            removeCurrentFromPrevious(next, previous);
+        if (!Objects.isNull(element)) {
+            if (size == 1) {
+                first = last = null;
+            } else if (size > 1) {
+                Node next = element.getNext();
+                Node previous = element.getPrevious();
+                removeCurrentFromNext(next, previous);
+                removeCurrentFromPrevious(next, previous);
+            }
+            taskIndexes.remove(id);
+            updateSize();
         }
-        taskIndexes.remove(id);
-        updateSize();
     }
 
     private void removeCurrentFromNext(Node next, Node previous) {

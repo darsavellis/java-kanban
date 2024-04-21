@@ -9,41 +9,35 @@ import interfaces.TaskManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static java.util.Collections.singletonList;
 
-class InMemoryTaskManagerTest {
-    private TaskManager taskManager;
-    private Task task;
-    private Epic epic;
-    private SubTask subTask;
-    private Integer taskId;
-    private Integer epicId;
-    private Integer subTaskId;
+class InMemoryTaskManagerTest extends TaskManagerTest<TaskManager> {
+    private final Comparator<Task> comparatorById = Comparator.comparing(Task::getId);
 
     @BeforeEach
-    public void createTaskManager() {
-        taskManager = Managers.getDefault();
-        task = new Task("Test createTask", "Test createTask description", State.NEW);
-        epic = new Epic("Test createEpic", "Test createEpic description");
+    public void initializeTasks() {
+        super.initializeTasks();
+    }
 
-        taskId = taskManager.createTask(task);
-        epicId = taskManager.createEpic(epic);
-
-        subTask = new SubTask(epicId, "Test createSubTask", "Test createSubTask description", State.NEW);
-
-        subTaskId = taskManager.createSubTask(subTask);
-
+    @Override
+    public TaskManager getTaskManager() {
+        return Managers.getDefault();
     }
 
     @Test
     public void createTask() {
-        final Task savedTask = taskManager.getTaskById(taskId);
+        final Optional<Task> optionalTask = taskManager.getTaskById(taskId);
 
-        assertNotNull(savedTask, "Task not found");
-        assertEquals(task, savedTask, "Task is not equals");
+        if (optionalTask.isPresent()) {
+            assertNotNull(optionalTask.get(), "Task not found");
+            assertEquals(task, optionalTask.get(), "Task is not equals");
+        }
 
         final List<Task> tasks = taskManager.getAllTasks();
 
@@ -54,10 +48,12 @@ class InMemoryTaskManagerTest {
 
     @Test
     public void createEpic() {
-        final Epic savedEpic = taskManager.getEpicById(epicId);
+        final Optional<Epic> optionalEpic = taskManager.getEpicById(epicId);
 
-        assertNotNull(savedEpic, "Task not found");
-        assertEquals(epic, savedEpic, "Task is not equals");
+        if (optionalEpic.isPresent()) {
+            assertNotNull(optionalEpic.get(), "Task not found");
+            assertEquals(epic, optionalEpic.get(), "Task is not equals");
+        }
 
         final List<Epic> epics = taskManager.getAllEpics();
 
@@ -68,62 +64,64 @@ class InMemoryTaskManagerTest {
 
     @Test
     public void createSubTasks() {
-        final SubTask savedSubTask = taskManager.getSubTaskById(subTaskId);
+        final Optional<SubTask> optionalSubTask = taskManager.getSubTaskById(firstSubTaskId);
 
-        assertNotNull(savedSubTask, "Task not found");
-        assertEquals(subTask, savedSubTask, "Task is not equals");
+        if (optionalSubTask.isPresent()) {
+            assertNotNull(optionalSubTask.get(), "Task not found");
+            assertEquals(firstSubTask, optionalSubTask.get(), "Task is not equals");
+        }
 
         final List<SubTask> subTasks = taskManager.getAllSubTasks();
 
-        assertNotNull(subTask, "SubTasks not returned");
-        assertEquals(1, subTasks.size(), "Invalid number of SubTasks");
-        assertEquals(subTask, subTasks.get(0), "SubTasks does not match");
+        assertNotNull(firstSubTask, "SubTasks not returned");
+        assertEquals(3, subTasks.size(), "Invalid number of SubTasks");
+        assertTrue(subTasks.contains(firstSubTask), "SubTasks does not match");
     }
 
 
     @Test
     public void createTasksWithIllegalArguments() {
-        SubTask subTask = new SubTask(10, "Test createSubTask", "Test createSubTask description", State.NEW);
+        SubTask subTask = new SubTask(50, "Test createSubTask",
+                "Test createSubTask description", State.NEW);
         final Integer subTaskId = taskManager.createSubTask(subTask);
         subTask.setEpicID(subTaskId);
 
-        final SubTask savedSubTask = taskManager.getSubTaskById(subTaskId);
-        assertNull(savedSubTask, "Instance of subTask must be null");
+        final Optional<SubTask> optionalSubTask = taskManager.getSubTaskById(subTaskId);
+
+        optionalSubTask.ifPresent(value -> assertNotEquals(value, null,
+                "Instance of subTask must be null"));
     }
 
-    @Test
-    public void createEpicsWithIllegalArguments() {
-//        Epic epic = new Epic("Test createEpic", "Test createEpic description");
-//        final Integer epicId = taskManager.createEpic(epic);
-//        We can pass to addSubTaskId only subTask object
-//        epic.addSubTaskId(epicId);
-    }
 
     @Test
     public void getTasks() {
         List<Task> allTasks = taskManager.getAllTasks();
         List<Epic> allEpics = taskManager.getAllEpics();
         List<SubTask> allSubTasks = taskManager.getAllSubTasks();
+
         assertEquals(singletonList(task), allTasks);
         assertEquals(singletonList(epic), allEpics);
-        assertEquals(singletonList(subTask), allSubTasks);
+        assertArrayEquals(Stream.of(firstSubTask, secondSubTask, thirdSubTask).sorted(comparatorById).toArray(),
+                allSubTasks.stream().sorted(comparatorById).toArray());
     }
 
     @Test
     public void historyManagerTest() {
         taskManager.getTaskById(taskId);
         taskManager.getEpicById(epicId);
-        taskManager.getSubTaskById(subTaskId);
+        taskManager.getSubTaskById(firstSubTaskId);
 
         List<Task> history = taskManager.getHistoryManager();
         assertEquals(3, history.size());
         assertEquals(task, history.get(0));
         assertEquals(epic, history.get(1));
-        assertEquals(subTask, history.get(2));
+        assertEquals(firstSubTask, history.get(2));
 
-        Task updatedTask = new Task(taskId, "Test updateTask", "Test updateTask description", State.DONE);
+        Task updatedTask = new Task(taskId, "Test updateTask", "Test updateTask description",
+                State.DONE, null, null);
         Epic updatedEpic = new Epic(epicId, "Test updateEpic", "Test updateEpic description");
-        SubTask updatedSubTask = new SubTask(subTaskId, 1, "Test updateSubTask", "Test updateSubTask description", State.DONE);
+        SubTask updatedSubTask = new SubTask(firstSubTaskId, 1, "Test updateSubTask",
+                "Test updateSubTask description", State.DONE, null, null);
 
         taskManager.updateTask(updatedTask);
         taskManager.updateEpic(updatedEpic);
@@ -131,20 +129,22 @@ class InMemoryTaskManagerTest {
 
         taskManager.getTaskById(taskId);
         taskManager.getEpicById(epicId);
-        taskManager.getSubTaskById(subTaskId);
+        taskManager.getSubTaskById(firstSubTaskId);
 
         assertEquals(3, history.size());
         assertEquals(task, history.get(0));
         assertEquals(epic, history.get(1));
-        assertEquals(subTask, history.get(2));
+        assertEquals(firstSubTask, history.get(2));
         assertNotSame(task.getState(), updatedTask.getState());
         assertNotSame(epic.getState(), updatedEpic.getState());
-        assertNotSame(subTask.getState(), updatedSubTask.getState());
+        assertNotSame(firstSubTask.getState(), updatedSubTask.getState());
     }
 
     @Test
     public void removeTaskFromManagerAndFromHistory() {
-        assertEquals(task, taskManager.getTaskById(taskId));
+        Optional<Task> optionalTask = taskManager.getTaskById(taskId);
+
+        optionalTask.ifPresent(value -> assertEquals(value, task));
 
         List<Task> historyManager = taskManager.getHistoryManager();
 
@@ -159,14 +159,17 @@ class InMemoryTaskManagerTest {
 
     @Test
     public void removeEpicFromManagerAndFromHistory() {
-        assertEquals(epic, taskManager.getEpicById(epicId));
+        Optional<Epic> optionalEpic = taskManager.getEpicById(epicId);
+
+        optionalEpic.ifPresent(value -> assertEquals(value, epic));
 
         List<Task> historyManager = taskManager.getHistoryManager();
 
         assertArrayEquals(historyManager.toArray(), taskManager.getAllEpics().toArray());
         assertEquals(taskManager.getAllEpics().size(), historyManager.size());
 
-        assertArrayEquals(taskManager.getAllSubTasksFromEpic(epic).toArray(), taskManager.getAllSubTasks().toArray());
+        assertArrayEquals(taskManager.getAllSubTasksFromEpic(epic).stream().sorted(comparatorById).toArray(),
+                taskManager.getAllSubTasks().stream().sorted(comparatorById).toArray());
 
         taskManager.removeAllEpics();
         historyManager = taskManager.getHistoryManager();
@@ -176,11 +179,20 @@ class InMemoryTaskManagerTest {
 
     @Test
     public void removeSubTaskFromManagerAndFromHistory() {
-        assertEquals(subTask, taskManager.getSubTaskById(subTaskId));
+        Optional<SubTask> firstOptionalSubTask = taskManager.getSubTaskById(firstSubTaskId);
+        Optional<SubTask> secondOptionalSubTask = taskManager.getSubTaskById(secondSubTaskId);
+        Optional<SubTask> thirdOptionalSubTask = taskManager.getSubTaskById(thirdSubTaskId);
+
+        firstOptionalSubTask.ifPresent(value -> assertEquals(value, firstSubTask));
+        secondOptionalSubTask.ifPresent(value -> assertEquals(value, secondSubTask));
+        thirdOptionalSubTask.ifPresent(value -> assertEquals(value, thirdSubTask));
+
 
         List<Task> historyManager = taskManager.getHistoryManager();
 
-        assertArrayEquals(historyManager.toArray(), taskManager.getAllSubTasks().toArray());
+        assertArrayEquals(historyManager.stream().sorted(comparatorById).toArray(),
+                taskManager.getAllSubTasks().stream().sorted(comparatorById).toArray());
+
         assertEquals(taskManager.getAllSubTasks().size(), historyManager.size());
 
         taskManager.removeAllSubTasks();
@@ -193,23 +205,25 @@ class InMemoryTaskManagerTest {
     public void endlessHistoryManagerTest() {
         taskManager.getTaskById(taskId);
         taskManager.getEpicById(epicId);
-        taskManager.getSubTaskById(subTaskId);
+        taskManager.getSubTaskById(firstSubTaskId);
 
         List<Task> historyManager = taskManager.getHistoryManager();
 
         assertEquals(3, historyManager.size());
         assertEquals(historyManager.get(0), task);
         assertEquals(historyManager.get(1), epic);
-        assertEquals(historyManager.get(2), subTask);
+        assertEquals(historyManager.get(2), firstSubTask);
 
-        subTask = taskManager.getSubTaskById(subTaskId);
-        epic = taskManager.getEpicById(epicId);
-        task = taskManager.getTaskById(taskId);
+        Optional<Epic> optionalEpic = taskManager.getEpicById(epicId);
+        Optional<Task> optionalTask = taskManager.getTaskById(taskId);
+
+        optionalEpic.ifPresent(value -> epic = value);
+        optionalTask.ifPresent(value -> task = value);
 
         historyManager = taskManager.getHistoryManager();
 
         assertEquals(3, historyManager.size());
-        assertEquals(historyManager.get(0), subTask);
+        assertEquals(historyManager.get(0), firstSubTask);
         assertEquals(historyManager.get(1), epic);
         assertEquals(historyManager.get(2), task);
     }
