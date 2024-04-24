@@ -41,7 +41,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
         String historyLine = readLinesFromFile.pollLast();
 
-        readLinesFromFile.stream().filter(x -> !x.isEmpty()).forEach(fileBackedTaskManager::taskFromString);
+        readLinesFromFile.stream().filter(lineFromFile -> !lineFromFile.isEmpty())
+                .forEach(fileBackedTaskManager::taskFromString);
 
         if (Objects.nonNull(historyLine)) {
             historyFromString(historyLine).stream()
