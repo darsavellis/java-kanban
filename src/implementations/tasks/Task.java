@@ -2,6 +2,8 @@ package implementations.tasks;
 
 import implementations.utility.State;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Task {
@@ -9,16 +11,26 @@ public class Task {
     private String name;
     private String description;
     private State state;
+    private LocalDateTime startTime;
+    private Duration duration;
+    private boolean isReadyForPrioritizing;
 
-    public Task(String name, String description, State state) {
-        this(0, name, description, state);
+    public Task(String name, String description, State state, LocalDateTime startTime, Long duration) {
+        this(0, name, description, state, startTime, duration);
     }
 
-    public Task(int id, String name, String description, State state) {
+    public Task(String name, String description, State state) {
+        this(0, name, description, state, null, null);
+    }
+
+    public Task(int id, String name, String description, State state, LocalDateTime startTime, Long duration) {
         setId(id);
         setName(name);
         setDescription(description);
         setState(state);
+        setStartTime(startTime);
+        setDuration(duration);
+        validateStartTimeAndDuration();
     }
 
     public Integer getId() {
@@ -53,6 +65,45 @@ public class Task {
         this.state = state;
     }
 
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        if (isReadyForPrioritizing) {
+            return startTime.plus(duration);
+        }
+        return null;
+    }
+
+    public long getDuration() {
+        if (isReadyForPrioritizing) {
+            return duration.toMinutes();
+        } else {
+            return 0;
+        }
+    }
+
+    public void setDuration(Long duration) {
+        if (duration != null) {
+            this.duration = Duration.ofMinutes(duration);
+        }
+    }
+
+    public void validateStartTimeAndDuration() {
+        if (startTime != null && duration != null) {
+            isReadyForPrioritizing = true;
+        }
+    }
+
+    public boolean isReadyForPrioritizing() {
+        return isReadyForPrioritizing;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -68,11 +119,13 @@ public class Task {
 
     @Override
     public String toString() {
-        return "tasks.Task{" +
+        return "Task{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", state=" + state +
+                ", startTime=" + startTime +
+                ", duration=" + duration +
                 '}';
     }
 }

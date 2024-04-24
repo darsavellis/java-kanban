@@ -2,12 +2,14 @@ package implementations.tasks;
 
 import implementations.utility.State;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Epic extends Task {
     private final ArrayList<Integer> subTaskArrayList = new ArrayList<>();
     private final HashMap<State, Integer> stateStatistics = new HashMap<>();
+    private LocalDateTime endTime;
 
     private void initialBlockForCheckStylePassing() {
         stateStatistics.put(State.NEW, 0);
@@ -16,12 +18,12 @@ public class Epic extends Task {
     }
 
     public Epic(int id, String name, String description) {
-        super(id, name, description, State.NEW);
+        super(id, name, description, State.NEW, null, null);
         initialBlockForCheckStylePassing();
     }
 
     public Epic(String name, String description) {
-        super(name, description, State.NEW);
+        super(name, description, State.NEW, null, null);
         initialBlockForCheckStylePassing();
     }
 
@@ -50,6 +52,15 @@ public class Epic extends Task {
         } else {
             setState(State.IN_PROGRESS);
         }
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
+
+    @Override
+    public LocalDateTime getEndTime() {
+        return endTime;
     }
 
     public ArrayList<Integer> getSubTaskArrayList() {

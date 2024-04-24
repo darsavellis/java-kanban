@@ -6,13 +6,15 @@ import implementations.tasks.Task;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.TreeSet;
 
 public interface TaskManager {
     Integer createTask(Task task);
 
     boolean updateTask(Task task);
 
-    Task getTaskById(int id);
+    Optional<Task> getTaskById(int id);
 
     ArrayList<Task> getAllTasks();
 
@@ -24,7 +26,7 @@ public interface TaskManager {
 
     boolean updateEpic(Epic epic);
 
-    Epic getEpicById(Integer id);
+    Optional<Epic> getEpicById(Integer id);
 
     List<Epic> getAllEpics();
 
@@ -38,7 +40,7 @@ public interface TaskManager {
 
     boolean updateSubTask(SubTask subTask);
 
-    SubTask getSubTaskById(Integer id);
+    Optional<SubTask> getSubTaskById(Integer id);
 
     List<SubTask> getAllSubTasks();
 
@@ -46,5 +48,7 @@ public interface TaskManager {
 
     void removeAllSubTasks();
 
-    public List<Task> getHistoryManager();
+    List<Task> getHistoryManager();
+
+    TreeSet<Task> getPrioritizedTasks();
 }
