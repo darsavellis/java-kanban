@@ -72,7 +72,7 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
         Assertions.assertDoesNotThrow(() -> dataFile = Files.readString(temporaryFile),
                 "Ошибка чтения файла");
 
-        String expectedString = String.format("%s%n%d%s%n%n", HEAD, task.getId(), ",TASK,Task,NEW,Description task,null,0");
+        String expectedString = String.format("%s%n%d%s%n%n", HEAD, task.getId(), ",TASK,Task,NEW,Description task,null,null");
 
         Assertions.assertEquals(expectedString, dataFile);
 
@@ -82,8 +82,8 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
         Assertions.assertDoesNotThrow(() -> dataFile = Files.readString(temporaryFile),
                 "Ошибка чтения файла");
 
-        expectedString = String.format("%s%n%d%s%n%d%s%n%n", HEAD, task.getId(), ",TASK,Task,NEW,Description task,null,0",
-                epic.getId(), ",EPIC,Epic,NEW,Description epic,null,0");
+        expectedString = String.format("%s%n%d%s%n%d%s%n%n", HEAD, task.getId(), ",TASK,Task,NEW,Description task,null,null",
+                epic.getId(), ",EPIC,Epic,null,Description epic,null,null");
 
         Assertions.assertEquals(expectedString, dataFile);
 
@@ -94,8 +94,8 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
                 "Ошибка чтения файла");
 
         expectedString = String.format("%s%n%d%s%n%d%s%n%d%s%d%s%n%n", HEAD, task.getId(),
-                ",TASK,Task,NEW,Description task,null,0", epic.getId(), ",EPIC,Epic,NEW,Description epic,null,0",
-                firstSubTask.getId(), ",SUBTASK,SubTask,NEW,Description subtask,", firstSubTask.getEpicID(), ",null,0");
+                ",TASK,Task,NEW,Description task,null,null", epic.getId(), ",EPIC,Epic,NEW,Description epic,null,null",
+                firstSubTask.getId(), ",SUBTASK,SubTask,NEW,Description subtask,", firstSubTask.getEpicID(), ",null,null");
 
         Assertions.assertEquals(expectedString, dataFile);
     }
@@ -146,9 +146,9 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
         Path dataFile = Paths.get("data.csv");
         String expectedData = String.join(DELIMITER,
                 HEAD,
-                "1,TASK,Task,NEW,Description task,null,0",
-                "2,EPIC,Epic,DONE,Description epic,null,0",
-                "3,SUBTASK,Sub Task,DONE,Description sub task,2,null,0", DELIMITER + "3,2,1");
+                "1,TASK,Task,NEW,Description task,null,null",
+                "2,EPIC,Epic,DONE,Description epic,null,null",
+                "3,SUBTASK,Sub Task,DONE,Description sub task,2,null,null", DELIMITER + "3,2,1");
 
         Assertions.assertDoesNotThrow(() -> Files.writeString(dataFile, expectedData),
                 "Ошибка записи в файл");

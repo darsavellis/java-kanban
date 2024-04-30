@@ -32,7 +32,7 @@ class InMemoryTaskManagerTest extends TaskManagerTest<TaskManager> {
 
     @Test
     public void createTask() {
-        final Optional<Task> optionalTask = taskManager.getTaskById(taskId);
+        final Optional<Task> optionalTask = taskManager.getTaskById(task.getId());
 
         if (optionalTask.isPresent()) {
             assertNotNull(optionalTask.get(), "Task not found");
@@ -48,7 +48,7 @@ class InMemoryTaskManagerTest extends TaskManagerTest<TaskManager> {
 
     @Test
     public void createEpic() {
-        final Optional<Epic> optionalEpic = taskManager.getEpicById(epicId);
+        final Optional<Epic> optionalEpic = taskManager.getEpicById(epic.getId());
 
         if (optionalEpic.isPresent()) {
             assertNotNull(optionalEpic.get(), "Task not found");
@@ -64,7 +64,7 @@ class InMemoryTaskManagerTest extends TaskManagerTest<TaskManager> {
 
     @Test
     public void createSubTasks() {
-        final Optional<SubTask> optionalSubTask = taskManager.getSubTaskById(firstSubTaskId);
+        final Optional<SubTask> optionalSubTask = taskManager.getSubTaskById(firstSubTask.getId());
 
         if (optionalSubTask.isPresent()) {
             assertNotNull(optionalSubTask.get(), "Task not found");
@@ -83,11 +83,9 @@ class InMemoryTaskManagerTest extends TaskManagerTest<TaskManager> {
     public void createTasksWithIllegalArguments() {
         SubTask subTask = new SubTask(50, "Test createSubTask",
                 "Test createSubTask description", State.NEW);
-        final Integer subTaskId = taskManager.createSubTask(subTask);
-        subTask.setEpicID(subTaskId);
+        taskManager.createSubTask(subTask);
 
-        final Optional<SubTask> optionalSubTask = taskManager.getSubTaskById(subTaskId);
-
+        final Optional<SubTask> optionalSubTask = taskManager.getSubTaskById(subTask.getId());
         optionalSubTask.ifPresent(value -> assertNotEquals(value, null,
                 "Instance of subTask must be null"));
     }
@@ -107,9 +105,9 @@ class InMemoryTaskManagerTest extends TaskManagerTest<TaskManager> {
 
     @Test
     public void historyManagerTest() {
-        taskManager.getTaskById(taskId);
-        taskManager.getEpicById(epicId);
-        taskManager.getSubTaskById(firstSubTaskId);
+        taskManager.getTaskById(task.getId());
+        taskManager.getEpicById(epic.getId());
+        taskManager.getSubTaskById(firstSubTask.getId());
 
         List<Task> history = taskManager.getHistoryManager();
         assertEquals(3, history.size());
@@ -117,19 +115,19 @@ class InMemoryTaskManagerTest extends TaskManagerTest<TaskManager> {
         assertEquals(epic, history.get(1));
         assertEquals(firstSubTask, history.get(2));
 
-        Task updatedTask = new Task(taskId, "Test updateTask", "Test updateTask description",
+        Task updatedTask = new Task(task.getId(), "Test updateTask", "Test updateTask description",
                 State.DONE, null, null);
-        Epic updatedEpic = new Epic(epicId, "Test updateEpic", "Test updateEpic description");
-        SubTask updatedSubTask = new SubTask(firstSubTaskId, 1, "Test updateSubTask",
+        Epic updatedEpic = new Epic(epic.getId(), "Test updateEpic", "Test updateEpic description");
+        SubTask updatedSubTask = new SubTask(firstSubTask.getId(), epic.getId(), "Test updateSubTask",
                 "Test updateSubTask description", State.DONE, null, null);
 
         taskManager.updateTask(updatedTask);
         taskManager.updateEpic(updatedEpic);
         taskManager.updateSubTask(updatedSubTask);
 
-        taskManager.getTaskById(taskId);
-        taskManager.getEpicById(epicId);
-        taskManager.getSubTaskById(firstSubTaskId);
+        taskManager.getTaskById(task.getId());
+        taskManager.getEpicById(epic.getId());
+        taskManager.getSubTaskById(firstSubTask.getId());
 
         assertEquals(3, history.size());
         assertEquals(task, history.get(0));
@@ -142,7 +140,7 @@ class InMemoryTaskManagerTest extends TaskManagerTest<TaskManager> {
 
     @Test
     public void removeTaskFromManagerAndFromHistory() {
-        Optional<Task> optionalTask = taskManager.getTaskById(taskId);
+        Optional<Task> optionalTask = taskManager.getTaskById(task.getId());
 
         optionalTask.ifPresent(value -> assertEquals(value, task));
 
@@ -159,7 +157,7 @@ class InMemoryTaskManagerTest extends TaskManagerTest<TaskManager> {
 
     @Test
     public void removeEpicFromManagerAndFromHistory() {
-        Optional<Epic> optionalEpic = taskManager.getEpicById(epicId);
+        Optional<Epic> optionalEpic = taskManager.getEpicById(epic.getId());
 
         optionalEpic.ifPresent(value -> assertEquals(value, epic));
 
@@ -179,9 +177,9 @@ class InMemoryTaskManagerTest extends TaskManagerTest<TaskManager> {
 
     @Test
     public void removeSubTaskFromManagerAndFromHistory() {
-        Optional<SubTask> firstOptionalSubTask = taskManager.getSubTaskById(firstSubTaskId);
-        Optional<SubTask> secondOptionalSubTask = taskManager.getSubTaskById(secondSubTaskId);
-        Optional<SubTask> thirdOptionalSubTask = taskManager.getSubTaskById(thirdSubTaskId);
+        Optional<SubTask> firstOptionalSubTask = taskManager.getSubTaskById(firstSubTask.getId());
+        Optional<SubTask> secondOptionalSubTask = taskManager.getSubTaskById(secondSubTask.getId());
+        Optional<SubTask> thirdOptionalSubTask = taskManager.getSubTaskById(thirdSubTask.getId());
 
         firstOptionalSubTask.ifPresent(value -> assertEquals(value, firstSubTask));
         secondOptionalSubTask.ifPresent(value -> assertEquals(value, secondSubTask));
@@ -203,9 +201,9 @@ class InMemoryTaskManagerTest extends TaskManagerTest<TaskManager> {
 
     @Test
     public void endlessHistoryManagerTest() {
-        taskManager.getTaskById(taskId);
-        taskManager.getEpicById(epicId);
-        taskManager.getSubTaskById(firstSubTaskId);
+        taskManager.getTaskById(task.getId());
+        taskManager.getEpicById(epic.getId());
+        taskManager.getSubTaskById(firstSubTask.getId());
 
         List<Task> historyManager = taskManager.getHistoryManager();
 
@@ -214,8 +212,8 @@ class InMemoryTaskManagerTest extends TaskManagerTest<TaskManager> {
         assertEquals(historyManager.get(1), epic);
         assertEquals(historyManager.get(2), firstSubTask);
 
-        Optional<Epic> optionalEpic = taskManager.getEpicById(epicId);
-        Optional<Task> optionalTask = taskManager.getTaskById(taskId);
+        Optional<Epic> optionalEpic = taskManager.getEpicById(epic.getId());
+        Optional<Task> optionalTask = taskManager.getTaskById(task.getId());
 
         optionalEpic.ifPresent(value -> epic = value);
         optionalTask.ifPresent(value -> task = value);

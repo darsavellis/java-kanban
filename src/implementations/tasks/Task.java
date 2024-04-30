@@ -6,31 +6,29 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class Task {
-    private int id;
+public class Task implements Comparable<Task> {
+    private Integer id;
     private String name;
     private String description;
     private State state;
     private LocalDateTime startTime;
     private Duration duration;
-    private boolean isReadyForPrioritizing;
 
     public Task(String name, String description, State state, LocalDateTime startTime, Long duration) {
-        this(0, name, description, state, startTime, duration);
+        this(null, name, description, state, startTime, duration);
     }
 
     public Task(String name, String description, State state) {
-        this(0, name, description, state, null, null);
+        this(null, name, description, state, null, null);
     }
 
-    public Task(int id, String name, String description, State state, LocalDateTime startTime, Long duration) {
+    public Task(Integer id, String name, String description, State state, LocalDateTime startTime, Long duration) {
         setId(id);
         setName(name);
         setDescription(description);
         setState(state);
         setStartTime(startTime);
         setDuration(duration);
-        validateStartTimeAndDuration();
     }
 
     public Integer getId() {
@@ -45,7 +43,7 @@ public class Task {
         return name;
     }
 
-    protected void setName(String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
@@ -53,7 +51,7 @@ public class Task {
         return description;
     }
 
-    protected void setDescription(String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
@@ -74,17 +72,17 @@ public class Task {
     }
 
     public LocalDateTime getEndTime() {
-        if (isReadyForPrioritizing) {
+        if (isReadyForPrioritizing()) {
             return startTime.plus(duration);
         }
         return null;
     }
 
-    public long getDuration() {
-        if (isReadyForPrioritizing) {
+    public Long getDuration() {
+        if (Objects.nonNull(duration)) {
             return duration.toMinutes();
         } else {
-            return 0;
+            return null;
         }
     }
 
@@ -94,14 +92,8 @@ public class Task {
         }
     }
 
-    public void validateStartTimeAndDuration() {
-        if (startTime != null && duration != null) {
-            isReadyForPrioritizing = true;
-        }
-    }
-
     public boolean isReadyForPrioritizing() {
-        return isReadyForPrioritizing;
+        return startTime != null && duration != null;
     }
 
     @Override
@@ -127,5 +119,22 @@ public class Task {
                 ", startTime=" + startTime +
                 ", duration=" + duration +
                 '}';
+    }
+
+    @Override
+    public int compareTo(Task secondTask) {
+        LocalDateTime firstStart = getStartTime();
+        LocalDateTime firstEnd = getEndTime();
+        LocalDateTime secondStart = secondTask.getStartTime();
+        LocalDateTime secondEnd = secondTask.getEndTime();
+        if ((firstStart.isAfter(secondEnd)) || firstStart.isEqual(secondEnd)
+                && firstStart.isAfter(secondStart)) {
+            return 1;
+        } else if ((secondStart.isAfter(firstEnd)) || secondStart.isEqual(firstEnd)
+                && secondStart.isEqual(firstEnd)) {
+            return -1;
+        } else {
+            return 0;
+        }
     }
 }
