@@ -63,7 +63,7 @@ public class HttpTaskManagerEpicTest {
 
         List<Epic> epicsFromManager = taskManager.getAllEpics();
 
-        assertNotNull(epicsFromManager, "Эпики не возвращаются");
+        assertNotNull(epicsFromManager, "Epics don't return");
         assertEquals(1, epicsFromManager.size());
         assertEquals("Test create epic", epicsFromManager.get(0).getName());
         assertEquals(201, response.statusCode());

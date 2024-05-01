@@ -61,7 +61,7 @@ public class HttpTaskManagerTasksTest {
 
         List<Task> tasksFromManager = taskManager.getAllTasks();
 
-        assertNotNull(tasksFromManager, "Задачи не возвращаются");
+        assertNotNull(tasksFromManager, "Tasks don't return");
         assertEquals(1, tasksFromManager.size());
         assertEquals("Test create task", tasksFromManager.get(0).getName());
     }
@@ -120,7 +120,7 @@ public class HttpTaskManagerTasksTest {
 
         List<Task> tasksFromManager = taskManager.getAllTasks();
 
-        assertNotNull(tasksFromManager, "Задачи не возвращаются");
+        assertNotNull(tasksFromManager, "Tasks don't return");
         assertEquals(1, tasksFromManager.size());
         assertEquals("Task after updated", tasksFromManager.get(0).getName());
     }
