@@ -10,7 +10,7 @@ import java.util.Optional;
 import java.util.TreeSet;
 
 public interface TaskManager {
-    Integer createTask(Task task);
+    Optional<Task> createTask(Task task);
 
     boolean updateTask(Task task);
 
@@ -22,7 +22,7 @@ public interface TaskManager {
 
     Task removeTaskById(Integer id);
 
-    Integer createEpic(Epic epic);
+    Optional<Epic> createEpic(Epic epic);
 
     boolean updateEpic(Epic epic);
 
@@ -36,7 +36,7 @@ public interface TaskManager {
 
     List<SubTask> getAllSubTasksFromEpic(Epic epic);
 
-    Integer createSubTask(SubTask subTask);
+    Optional<SubTask> createSubTask(SubTask subTask);
 
     boolean updateSubTask(SubTask subTask);
 

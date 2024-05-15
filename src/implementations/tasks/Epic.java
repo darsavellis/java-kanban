@@ -5,53 +5,19 @@ import implementations.utility.State;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class Epic extends Task {
-    private final ArrayList<Integer> subTaskArrayList = new ArrayList<>();
-    private final HashMap<State, Integer> stateStatistics = new HashMap<>();
-    private LocalDateTime endTime;
+    private transient ArrayList<Integer> subTaskArrayList;
+    private transient HashMap<State, Integer> stateStatistics;
+    private transient LocalDateTime endTime;
 
-    private void initialBlockForCheckStylePassing() {
-        stateStatistics.put(State.NEW, 0);
-        stateStatistics.put(State.IN_PROGRESS, 0);
-        stateStatistics.put(State.DONE, 0);
-    }
-
-    public Epic(int id, String name, String description) {
-        super(id, name, description, State.NEW, null, null);
-        initialBlockForCheckStylePassing();
+    public Epic(Integer id, String name, String description) {
+        super(id, name, description, null, null, null);
     }
 
     public Epic(String name, String description) {
-        super(name, description, State.NEW, null, null);
-        initialBlockForCheckStylePassing();
-    }
-
-    public void addSubTaskId(SubTask subTask) {
-        subTaskArrayList.add(subTask.getId());
-        updateStatistics(subTask, "add");
-    }
-
-    public void removeSubTaskId(SubTask subTask) {
-        subTaskArrayList.remove(subTask.getId());
-        updateStatistics(subTask, "sub");
-    }
-
-    private void updateStatistics(SubTask subTask, String action) {
-        Integer count = stateStatistics.get(subTask.getState());
-        count = action.equals("add") ? count + 1 : count - 1;
-        stateStatistics.put(subTask.getState(), count);
-        updateState();
-    }
-
-    private void updateState() {
-        if (stateStatistics.get(State.NEW) == subTaskArrayList.size()) {
-            setState(State.NEW);
-        } else if (stateStatistics.get(State.DONE) == subTaskArrayList.size()) {
-            setState(State.DONE);
-        } else {
-            setState(State.IN_PROGRESS);
-        }
+        super(name, description, null, null, null);
     }
 
     public void setEndTime(LocalDateTime endTime) {
@@ -63,8 +29,35 @@ public class Epic extends Task {
         return endTime;
     }
 
+    public void initialize() {
+        setSubTaskArrayList(new ArrayList<>());
+        setStateStatistics(new HashMap<>(Map.of(State.NEW, 0, State.IN_PROGRESS, 0, State.DONE, 0)));
+    }
+
+    public void setSubTaskArrayList(ArrayList<Integer> subTaskArrayList) {
+        this.subTaskArrayList = subTaskArrayList;
+    }
+
+    public void setStateStatistics(HashMap<State, Integer> stateStatistics) {
+        this.stateStatistics = stateStatistics;
+    }
+
     public ArrayList<Integer> getSubTaskArrayList() {
-        return new ArrayList<>(subTaskArrayList);
+        return subTaskArrayList;
+    }
+
+    public HashMap<State, Integer> getStateStatistics() {
+        return stateStatistics;
+    }
+
+    public void updateState() {
+        if (stateStatistics.get(State.NEW) == subTaskArrayList.size()) {
+            setState(State.NEW);
+        } else if (stateStatistics.get(State.DONE) == subTaskArrayList.size()) {
+            setState(State.DONE);
+        } else {
+            setState(State.IN_PROGRESS);
+        }
     }
 
     @Override

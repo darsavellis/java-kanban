@@ -31,35 +31,35 @@ public class Main {
 
         TaskManager taskManager = new InMemoryTaskManager();
 
-        Integer firstTaskId = taskManager.createTask(firstTask);
-        Integer secondTaskId = taskManager.createTask(secondTask);
-        Integer epicId = taskManager.createEpic(epic);
-        Integer emptyEpicId = taskManager.createEpic(emptyEpic);
+        taskManager.createTask(firstTask);
+        taskManager.createTask(secondTask);
+        taskManager.createEpic(epic);
+        taskManager.createEpic(emptyEpic);
 
         SubTask firstSubTask = new SubTask(
-                epicId,
+                epic.getId(),
                 "Посуда",
                 "Помыть посуду на кухне",
                 State.NEW
         );
 
         SubTask secondSubTask = new SubTask(
-                epicId,
+                epic.getId(),
                 "Пол",
                 "Пропылесосить пол в комнате",
                 State.NEW
         );
 
         SubTask thirdSubTask = new SubTask(
-                epicId,
+                epic.getId(),
                 "Полки",
                 "Протереть пыль на полках и сложить книги",
                 State.NEW
         );
 
-        Integer firstSubTaskId = taskManager.createSubTask(firstSubTask);
-        Integer secondSubTaskId = taskManager.createSubTask(secondSubTask);
-        Integer thirdSubTaskId = taskManager.createSubTask(thirdSubTask);
+        taskManager.createSubTask(firstSubTask);
+        taskManager.createSubTask(secondSubTask);
+        taskManager.createSubTask(thirdSubTask);
 
         String textForTaskQuery = "Делаем запрос к задаче: \n";
         String textForSubTaskQuery = "Делаем запрос к подзадаче: \n";
@@ -67,33 +67,33 @@ public class Main {
 
         printHistory(taskManager);
 
-        System.out.println(textForTaskQuery + taskManager.getTaskById(firstTaskId));
-        System.out.println(textForTaskQuery + taskManager.getTaskById(secondTaskId));
-        System.out.println(textForSubTaskQuery + taskManager.getSubTaskById(firstSubTaskId));
-        System.out.println(textForSubTaskQuery + taskManager.getSubTaskById(secondSubTaskId));
-        System.out.println(textForSubTaskQuery + taskManager.getSubTaskById(thirdSubTaskId));
-        System.out.println(textForEpicQuery + taskManager.getEpicById(epicId));
-        System.out.println(textForEpicQuery + taskManager.getEpicById(emptyEpicId));
+        System.out.println(textForTaskQuery + taskManager.getTaskById(firstTask.getId()));
+        System.out.println(textForTaskQuery + taskManager.getTaskById(secondTask.getId()));
+        System.out.println(textForSubTaskQuery + taskManager.getSubTaskById(firstSubTask.getId()));
+        System.out.println(textForSubTaskQuery + taskManager.getSubTaskById(secondSubTask.getId()));
+        System.out.println(textForSubTaskQuery + taskManager.getSubTaskById(thirdSubTask.getId()));
+        System.out.println(textForEpicQuery + taskManager.getEpicById(epic.getId()));
+        System.out.println(textForEpicQuery + taskManager.getEpicById(emptyEpic.getId()));
 
         printHistory(taskManager);
 
-        System.out.println(textForTaskQuery + taskManager.getTaskById(firstTaskId));
-        System.out.println(textForTaskQuery + taskManager.getTaskById(secondTaskId));
+        System.out.println(textForTaskQuery + taskManager.getTaskById(firstTask.getId()));
+        System.out.println(textForTaskQuery + taskManager.getTaskById(secondTask.getId()));
 
         printHistory(taskManager);
 
         for (int i = 0; i < 5; i++) {
-            System.out.println(textForTaskQuery + taskManager.getTaskById(firstTaskId));
+            System.out.println(textForTaskQuery + taskManager.getTaskById(firstTask.getId()));
         }
 
         printHistory(taskManager);
 
-        System.out.println("Удалим задачу " + taskManager.removeTaskById(secondTaskId));
-        System.out.println("Удалим пустой эпик " + taskManager.removeEpicById(emptyEpicId));
+        System.out.println("Удалим задачу " + taskManager.removeTaskById(secondTask.getId()));
+        System.out.println("Удалим пустой эпик " + taskManager.removeEpicById(emptyEpic.getId()));
 
         printHistory(taskManager);
 
-        System.out.println("Удалим епик " + taskManager.removeEpicById(epicId));
+        System.out.println("Удалим епик " + taskManager.removeEpicById(epic.getId()));
 
         printHistory(taskManager);
     }

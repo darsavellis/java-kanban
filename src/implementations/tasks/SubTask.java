@@ -5,7 +5,7 @@ import implementations.utility.State;
 import java.time.LocalDateTime;
 
 public class SubTask extends Task {
-    private int epicID;
+    private Integer epicID;
 
     public SubTask(Integer epicId, String name, String description, State state, LocalDateTime startTime,
                    Long duration) {
@@ -24,7 +24,7 @@ public class SubTask extends Task {
         setEpicID(epicId);
     }
 
-    public int getEpicID() {
+    public Integer getEpicID() {
         return epicID;
     }
 

@@ -62,6 +62,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     static List<Integer> historyFromString(String value) {
         return Arrays.stream(value.split(DELIMITER_COMMA))
+                .filter(element -> !element.isBlank())
                 .map(Integer::parseInt)
                 .collect(Collectors.toList());
     }
@@ -87,7 +88,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         switch (type) {
             case TASK:
                 putTaskInStorage(new Task(Integer.parseInt(arguments[0]), arguments[2], arguments[4],
-                        State.valueOf(arguments[3]), parseStringToDate(arguments[5]), Long.parseLong(arguments[6])));
+                        State.valueOf(arguments[3]), parseStringToDate(arguments[5]), parseStringToLong(arguments[6])));
                 break;
             case EPIC:
                 putEpicInStorage(new Epic(Integer.parseInt(arguments[0]), arguments[2], arguments[4]));
@@ -95,7 +96,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             case SUBTASK:
                 putSubTaskInStorage(new SubTask(
                         Integer.valueOf(arguments[0]), Integer.valueOf(arguments[5]), arguments[2], arguments[4],
-                        State.valueOf(arguments[3]), parseStringToDate(arguments[6]), Long.parseLong(arguments[7])));
+                        State.valueOf(arguments[3]), parseStringToDate(arguments[6]), parseStringToLong(arguments[7])));
                 break;
         }
     }
@@ -143,11 +144,19 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         }
     }
 
+    public Long parseStringToLong(String duration) {
+        if (!duration.equals("null")) {
+            return Long.parseLong(duration);
+        } else {
+            return null;
+        }
+    }
+
     @Override
-    public Integer createTask(Task task) {
-        Integer taskId = super.createTask(task);
+    public Optional<Task> createTask(Task task) {
+        Optional<Task> optionalTask = super.createTask(task);
         save();
-        return taskId;
+        return optionalTask;
     }
 
     @Override
@@ -178,10 +187,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public Integer createEpic(Epic epic) {
-        Integer epicId = super.createEpic(epic);
+    public Optional<Epic> createEpic(Epic epic) {
+        Optional<Epic> optionalEpic = super.createEpic(epic);
         save();
-        return epicId;
+        return optionalEpic;
     }
 
     @Override
@@ -212,17 +221,17 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public Integer createSubTask(SubTask subTask) {
-        Integer subTaskId = super.createSubTask(subTask);
+    public Optional<SubTask> createSubTask(SubTask subTask) {
+        Optional<SubTask> optionalSubTask = super.createSubTask(subTask);
         save();
-        return subTaskId;
+        return optionalSubTask;
     }
 
     @Override
     public boolean updateSubTask(SubTask subTask) {
-        boolean isTaskUpdated = super.updateSubTask(subTask);
+        boolean isSubTaskUpdated = super.updateSubTask(subTask);
         save();
-        return isTaskUpdated;
+        return isSubTaskUpdated;
     }
 
     @Override

@@ -23,11 +23,6 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     protected SubTask firstSubTask;
     protected SubTask secondSubTask;
     protected SubTask thirdSubTask;
-    protected Integer taskId;
-    protected Integer epicId;
-    protected Integer firstSubTaskId;
-    protected Integer secondSubTaskId;
-    protected Integer thirdSubTaskId;
 
     @BeforeEach
     public void initializeTaskManager() {
@@ -40,25 +35,25 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 Duration.ofHours(1).toMinutes());
         epic = new Epic("Test createEpic", "Test createEpic description");
 
-        taskId = taskManager.createTask(task);
-        epicId = taskManager.createEpic(epic);
+        taskManager.createTask(task);
+        taskManager.createEpic(epic);
 
-        firstSubTask = new SubTask(epicId, "Test createFirstSubTask",
+        firstSubTask = new SubTask(epic.getId(), "Test createFirstSubTask",
                 "Test createFirstSubTask description", State.NEW,
                 LocalDateTime.of(2024, 3, 20, 19, 0),
                 Duration.ofHours(1).toMinutes());
-        secondSubTask = new SubTask(epicId, "Test createSecondSubTask",
+        secondSubTask = new SubTask(epic.getId(), "Test createSecondSubTask",
                 "Test createFirstSubTask description", State.NEW,
                 LocalDateTime.of(2024, 3, 20, 20, 0),
                 Duration.ofHours(1).toMinutes());
-        thirdSubTask = new SubTask(epicId, "Test createThirdSubTask",
+        thirdSubTask = new SubTask(epic.getId(), "Test createThirdSubTask",
                 "Test createThirdSubTask description", State.NEW,
                 LocalDateTime.of(2024, 3, 20, 21, 0),
                 Duration.ofHours(1).toMinutes());
 
-        firstSubTaskId = taskManager.createSubTask(firstSubTask);
-        secondSubTaskId = taskManager.createSubTask(secondSubTask);
-        thirdSubTaskId = taskManager.createSubTask(thirdSubTask);
+        taskManager.createSubTask(firstSubTask);
+        taskManager.createSubTask(secondSubTask);
+        taskManager.createSubTask(thirdSubTask);
     }
 
     @Nested
@@ -73,11 +68,11 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         public void epicShouldHaveCorrectStatuses() {
             assertEquals(epic.getState(), State.NEW);
 
-            firstSubTask = new SubTask(firstSubTaskId, epicId, "Test update firstSubTask",
+            firstSubTask = new SubTask(firstSubTask.getId(), epic.getId(), "Test update firstSubTask",
                     "Test update firstSubTask description", State.DONE,
                     LocalDateTime.of(2024, 4, 20, 18, 0),
                     Duration.ofHours(1).toMinutes());
-            secondSubTask = new SubTask(secondSubTaskId, epicId, "Test update secondSubTask",
+            secondSubTask = new SubTask(secondSubTask.getId(), epic.getId(), "Test update secondSubTask",
                     "Test update secondSubTask description", State.DONE,
                     LocalDateTime.of(2024, 4, 20, 19, 0),
                     Duration.ofHours(1).toMinutes());
@@ -87,7 +82,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
             assertEquals(epic.getState(), State.IN_PROGRESS);
 
-            thirdSubTask = new SubTask(thirdSubTaskId, epicId, "Test update thirdSubTask",
+            thirdSubTask = new SubTask(thirdSubTask.getId(), epic.getId(), "Test update thirdSubTask",
                     "Test update thirdSubTask description", State.DONE,
                     LocalDateTime.of(2024, 4, 20, 20, 0),
                     Duration.ofHours(1).toMinutes());
@@ -96,15 +91,15 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
             assertEquals(epic.getState(), State.DONE);
 
-            firstSubTask = new SubTask(firstSubTaskId, epicId, "Test update firstSubTask",
+            firstSubTask = new SubTask(firstSubTask.getId(), epic.getId(), "Test update firstSubTask",
                     "Test update firstSubTask description", State.IN_PROGRESS,
                     LocalDateTime.of(2024, 4, 20, 18, 0),
                     Duration.ofHours(1).toMinutes());
-            secondSubTask = new SubTask(secondSubTaskId, epicId, "Test update secondSubTask",
+            secondSubTask = new SubTask(secondSubTask.getId(), epic.getId(), "Test update secondSubTask",
                     "Test update secondSubTask description", State.IN_PROGRESS,
                     LocalDateTime.of(2024, 4, 20, 19, 0),
                     Duration.ofHours(1).toMinutes());
-            thirdSubTask = new SubTask(thirdSubTaskId, epicId, "Test update thirdSubTask",
+            thirdSubTask = new SubTask(thirdSubTask.getId(), epic.getId(), "Test update thirdSubTask",
                     "Test update thirdSubTask description", State.IN_PROGRESS,
                     LocalDateTime.of(2024, 4, 20, 20, 0),
                     Duration.ofHours(1).toMinutes());
@@ -146,7 +141,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
             taskManager.createTask(task);
             taskManager.createEpic(epic);
 
-            firstSubTask = new SubTask(firstSubTaskId, epic.getId(), "Create firstSubTask",
+            firstSubTask = new SubTask(firstSubTask.getId(), epic.getId(), "Create firstSubTask",
                     "Create firstSubTask description", State.NEW,
                     LocalDateTime.of(2024, 4, 20, 18, 0),
                     Duration.ofHours(1).toMinutes());
@@ -156,7 +151,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
             assertEquals(2, taskManager.getPrioritizedTasks().size());
             assertEquals(1, taskManager.getAllSubTasks().size());
 
-            secondSubTask = new SubTask(secondSubTaskId, epic.getId(), "Create secondSubTask with the same time",
+            secondSubTask = new SubTask(secondSubTask.getId(), epic.getId(), "Create secondSubTask with the same time",
                     "Create secondSubTask with the same time description", State.NEW,
                     LocalDateTime.of(2024, 4, 20, 18, 0),
                     Duration.ofHours(1).toMinutes());
@@ -166,7 +161,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
             assertEquals(2, taskManager.getPrioritizedTasks().size());
             assertEquals(1, taskManager.getAllSubTasks().size());
 
-            secondSubTask = new SubTask(secondSubTaskId, epic.getId(), "Create secondSubTask with the same time",
+            secondSubTask = new SubTask(secondSubTask.getId(), epic.getId(), "Create secondSubTask with the same time",
                     "Create secondSubTask with the same time description", State.NEW,
                     LocalDateTime.of(2024, 4, 20, 18, 59, 59),
                     Duration.ofHours(1).toMinutes());
@@ -176,7 +171,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
             assertEquals(2, taskManager.getPrioritizedTasks().size());
             assertEquals(1, taskManager.getAllSubTasks().size());
 
-            secondSubTask = new SubTask(secondSubTaskId, epic.getId(), "Create secondSubTask with the same time",
+            secondSubTask = new SubTask(secondSubTask.getId(), epic.getId(), "Create secondSubTask with the same time",
                     "Create secondSubTask with the same time description", State.NEW,
                     LocalDateTime.of(2024, 4, 20, 19, 0, 0),
                     Duration.ofHours(1).toMinutes());
@@ -186,7 +181,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
             assertEquals(3, taskManager.getPrioritizedTasks().size());
             assertEquals(2, taskManager.getAllSubTasks().size());
 
-            thirdSubTask = new SubTask(thirdSubTaskId, epic.getId(), "Test update thirdSubTask",
+            thirdSubTask = new SubTask(thirdSubTask.getId(), epic.getId(), "Test update thirdSubTask",
                     "Test update thirdSubTask description", State.NEW,
                     LocalDateTime.of(2024, 4, 20, 17, 1),
                     Duration.ofHours(1).toMinutes());
@@ -194,7 +189,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
             assertEquals(3, taskManager.getPrioritizedTasks().size());
             assertEquals(2, taskManager.getAllSubTasks().size());
 
-            thirdSubTask = new SubTask(thirdSubTaskId, epic.getId(), "Test update thirdSubTask",
+            thirdSubTask = new SubTask(thirdSubTask.getId(), epic.getId(), "Test update thirdSubTask",
                     "Test update thirdSubTask description", State.NEW,
                     LocalDateTime.of(2024, 4, 20, 16, 59, 59),
                     Duration.ofHours(1).toMinutes());
